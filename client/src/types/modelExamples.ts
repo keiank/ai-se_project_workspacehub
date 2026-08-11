@@ -1,5 +1,6 @@
 import type { Project, Task } from "./models";
 import type { ProjectWithTaskCount } from "./views";
+import { buildProjectWithTaskCount } from "../utils/projectMetrics";
 
 const organizationId = "org-001";
 const projectId = "project-001";
@@ -45,7 +46,7 @@ const exampleTasks: Task[] = [
   },
 ];
 
-export const exampleProjectWithTaskCount: ProjectWithTaskCount = {
-  ...exampleProject,
-  taskCount: exampleTasks.filter((task) => task.projectId === exampleProject._id).length,
-};
+export const exampleProjectWithTaskCount: ProjectWithTaskCount = buildProjectWithTaskCount(
+  exampleProject,
+  exampleTasks,
+);

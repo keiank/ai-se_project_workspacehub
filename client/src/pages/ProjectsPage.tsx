@@ -8,6 +8,7 @@ import { ProjectCreatePayload } from "../types/models";
 import type { ProjectWithTaskCount } from "../types/views";
 import { useAuth } from "../hooks/useAuth";
 import { canDeleteResources } from "../utils/permissions";
+import { buildProjectWithTaskCount } from "../utils/projectMetrics";
 
 export const ProjectsPage = () => {
   const { user } = useAuth();
@@ -27,10 +28,7 @@ export const ProjectsPage = () => {
         taskService.list(),
       ]);
       const projectsWithCounts: ProjectWithTaskCount[] = nextProjects.map(
-        (p): ProjectWithTaskCount => {
-          const count = tasks.filter((t) => t.projectId === p._id).length;
-          return { ...p, taskCount: count };
-        },
+        (project) => buildProjectWithTaskCount(project, tasks),
       );
       setProjects(projectsWithCounts);
     } catch (error) {
