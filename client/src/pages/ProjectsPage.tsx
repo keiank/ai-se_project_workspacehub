@@ -4,14 +4,15 @@ import { PageHeader } from "../components/PageHeader";
 import { StatusPanel } from "../components/StatusPanel";
 import { projectService } from "../services/projectService";
 import { taskService } from "../services/taskService";
-import type { ProjectWithTaskCount } from "../types/models";
+import { ProjectCreatePayload } from "../types/models";
+import type { ProjectWithTaskCount } from "../types/views";
 import { useAuth } from "../hooks/useAuth";
 import { canDeleteResources } from "../utils/permissions";
 
 export const ProjectsPage = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState<ProjectWithTaskCount[]>([]);
-  const [formState, setFormState] = useState({ name: "", description: "" });
+  const [formState, setFormState] = useState<ProjectCreatePayload>({ name: "", description: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
