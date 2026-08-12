@@ -39,6 +39,39 @@ export const BookingsPage = () => {
     {},
   );
 
+  const validateBookingFormState = (
+    form: BookingFormState,
+  ): string | null => {
+    if (!form.title || form.title.trim().length < 2) {
+      return "Title must be at least 2 characters.";
+    }
+
+    if (!form.startsAt) {
+      return "Start date/time is required.";
+    }
+
+    if (!form.endsAt) {
+      return "End date/time is required.";
+    }
+
+    const starts = new Date(form.startsAt);
+    const ends = new Date(form.endsAt);
+
+    if (Number.isNaN(starts.getTime())) {
+      return "Start date/time is invalid.";
+    }
+
+    if (Number.isNaN(ends.getTime())) {
+      return "End date/time is invalid.";
+    }
+
+    if (!(ends.getTime() > starts.getTime())) {
+      return "End date/time must be after start date/time.";
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     const loadBookings = async () => {
       if (!isFeatureEnabled("scheduling")) {
@@ -76,6 +109,14 @@ export const BookingsPage = () => {
 
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // clear previous feedback and validate
+    setCreateError(null);
+    const validation = validateBookingFormState(createState);
+    if (validation) {
+      setCreateError(validation);
+      return;
+    }
 
     try {
       const booking = await bookingService.create(createState);
@@ -119,10 +160,27 @@ export const BookingsPage = () => {
   };
 
   const handleSave = async (bookingId: string) => {
+    // clear previous feedback then validate local edits
+    setBookingErrors((current) => ({ ...current, [bookingId]: "" }));
+    const formState = bookingEdits[bookingId];
+    if (!formState) {
+      setBookingErrors((current) => ({
+        ...current,
+        [bookingId]: "No local edits to save.",
+      }));
+      return;
+    }
+
+    const validation = validateBookingFormState(formState);
+    if (validation) {
+      setBookingErrors((current) => ({ ...current, [bookingId]: validation }));
+      return;
+    }
+
     try {
       const updatedBooking = await bookingService.update(
         bookingId,
-        bookingEdits[bookingId],
+        formState,
       );
       setBookings((current) =>
         current.map((booking) =>
