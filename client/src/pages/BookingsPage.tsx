@@ -5,7 +5,11 @@ import { useAuth } from "../hooks/useAuth";
 import { bookingService } from "../services/bookingService";
 import type { Booking } from "../types/models";
 import { formatDateTimeInput } from "../utils/date";
-import { canDeleteResources, canEditBooking } from "../utils/permissions";
+import {
+  canCreateBooking,
+  canDeleteResources,
+  canEditBooking,
+} from "../utils/permissions";
 
 interface BookingFormState {
   title: string;
@@ -34,6 +38,7 @@ export const BookingsPage = () => {
     endsAt: "",
   });
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
   const [bookingErrors, setBookingErrors] = useState<Record<string, string>>(
     {},
@@ -80,7 +85,7 @@ export const BookingsPage = () => {
       }
 
       setLoading(true);
-      setCreateError(null);
+      setLoadError(null);
 
       try {
         const nextBookings = await bookingService.list();
@@ -94,7 +99,7 @@ export const BookingsPage = () => {
           ),
         );
       } catch (loadError) {
-        setCreateError(
+        setLoadError(
           loadError instanceof Error
             ? loadError.message
             : "Unable to load bookings",
@@ -107,19 +112,30 @@ export const BookingsPage = () => {
     void loadBookings();
   }, [isFeatureEnabled]);
 
+  const canCreate = canCreateBooking(user);
+
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // clear previous feedback and validate
+    if (!canCreate) {
+      setCreateError("You do not have permission to create bookings.");
+      return;
+    }
+
     setCreateError(null);
-    const validation = validateBookingFormState(createState);
+    const normalizedState = {
+      ...createState,
+      title: createState.title.trim(),
+    };
+
+    const validation = validateBookingFormState(normalizedState);
     if (validation) {
       setCreateError(validation);
       return;
     }
 
     try {
-      const booking = await bookingService.create(createState);
+      const booking = await bookingService.create(normalizedState);
       setBookings((current) =>
         [...current, booking].sort((left, right) =>
           left.startsAt.localeCompare(right.startsAt),
@@ -160,18 +176,24 @@ export const BookingsPage = () => {
   };
 
   const handleSave = async (bookingId: string) => {
-    // clear previous feedback then validate local edits
-    setBookingErrors((current) => ({ ...current, [bookingId]: "" }));
-    const formState = bookingEdits[bookingId];
-    if (!formState) {
+    const booking = bookings.find((entry) => entry._id === bookingId);
+    if (!booking) {
       setBookingErrors((current) => ({
         ...current,
-        [bookingId]: "No local edits to save.",
+        [bookingId]: "Booking not found.",
       }));
       return;
     }
 
-    const validation = validateBookingFormState(formState);
+    setBookingErrors((current) => ({ ...current, [bookingId]: "" }));
+    const formState = bookingEdits[bookingId] ?? buildBookingFormState(booking);
+
+    const normalizedState = {
+      ...formState,
+      title: formState.title.trim(),
+    };
+
+    const validation = validateBookingFormState(normalizedState);
     if (validation) {
       setBookingErrors((current) => ({ ...current, [bookingId]: validation }));
       return;
@@ -180,11 +202,11 @@ export const BookingsPage = () => {
     try {
       const updatedBooking = await bookingService.update(
         bookingId,
-        formState,
+        normalizedState,
       );
       setBookings((current) =>
-        current.map((booking) =>
-          booking._id === bookingId ? updatedBooking : booking,
+        current.map((entry) =>
+          entry._id === bookingId ? updatedBooking : entry,
         ),
       );
       setBookingEdits((current) => ({
@@ -209,6 +231,16 @@ export const BookingsPage = () => {
       setBookings((current) =>
         current.filter((booking) => booking._id !== bookingId),
       );
+      setBookingEdits((current) => {
+        const nextEdits = { ...current };
+        delete nextEdits[bookingId];
+        return nextEdits;
+      });
+      setBookingErrors((current) => {
+        const nextErrors = { ...current };
+        delete nextErrors[bookingId];
+        return nextErrors;
+      });
     } catch (deleteError) {
       setBookingErrors((current) => ({
         ...current,
@@ -238,6 +270,15 @@ export const BookingsPage = () => {
     );
   }
 
+  if (loadError) {
+    return (
+      <StatusPanel
+        title="Bookings unavailable"
+        message={loadError}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -252,7 +293,8 @@ export const BookingsPage = () => {
           <h2 className="text-xl font-semibold text-ink">Create booking</h2>
           <div className="mt-4 space-y-4">
             <input
-              className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880]"
+              className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880] disabled:cursor-not-allowed disabled:bg-slate-100"
+              disabled={!canCreate}
               onChange={(event) =>
                 setCreateState((current) => ({
                   ...current,
@@ -263,7 +305,8 @@ export const BookingsPage = () => {
               value={createState.title}
             />
             <textarea
-              className="min-h-28 w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880]"
+              className="min-h-28 w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880] disabled:cursor-not-allowed disabled:bg-slate-100"
+              disabled={!canCreate}
               onChange={(event) =>
                 setCreateState((current) => ({
                   ...current,
@@ -274,7 +317,8 @@ export const BookingsPage = () => {
               value={createState.description}
             />
             <input
-              className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3"
+              className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:cursor-not-allowed disabled:bg-slate-100"
+              disabled={!canCreate}
               onChange={(event) =>
                 setCreateState((current) => ({
                   ...current,
@@ -285,7 +329,8 @@ export const BookingsPage = () => {
               value={createState.startsAt}
             />
             <input
-              className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3"
+              className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:cursor-not-allowed disabled:bg-slate-100"
+              disabled={!canCreate}
               onChange={(event) =>
                 setCreateState((current) => ({
                   ...current,
@@ -300,6 +345,7 @@ export const BookingsPage = () => {
             ) : null}
             <button
               className="rounded-[12px] bg-ink px-4 py-3 font-medium text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!canCreate}
               type="submit"
             >
               Create booking
