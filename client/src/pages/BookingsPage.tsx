@@ -18,6 +18,8 @@ interface BookingFormState {
   endsAt: string;
 }
 
+type BookingFormErrors = Partial<Record<keyof BookingFormState, string>>;
+
 const buildBookingFormState = (booking: Booking): BookingFormState => ({
   title: booking.title,
   description: booking.description,
@@ -43,38 +45,52 @@ export const BookingsPage = () => {
   const [bookingErrors, setBookingErrors] = useState<Record<string, string>>(
     {},
   );
+  const [createTouched, setCreateTouched] = useState<
+    Partial<Record<keyof BookingFormState, boolean>>
+  >({});
+  const [editTouched, setEditTouched] = useState<
+    Record<string, Partial<Record<keyof BookingFormState, boolean>>>
+  >({});
 
   const validateBookingFormState = (
     form: BookingFormState,
-  ): string | null => {
+  ): BookingFormErrors => {
+    const errors: BookingFormErrors = {};
+
     if (!form.title || form.title.trim().length < 2) {
-      return "Title must be at least 2 characters.";
+      errors.title = "Title must be at least 2 characters.";
     }
 
     if (!form.startsAt) {
-      return "Start date/time is required.";
+      errors.startsAt = "Start date/time is required.";
     }
 
     if (!form.endsAt) {
-      return "End date/time is required.";
+      errors.endsAt = "End date/time is required.";
     }
 
     const starts = new Date(form.startsAt);
     const ends = new Date(form.endsAt);
 
-    if (Number.isNaN(starts.getTime())) {
-      return "Start date/time is invalid.";
+    if (form.startsAt && Number.isNaN(starts.getTime())) {
+      errors.startsAt = "Start date/time is invalid.";
     }
 
-    if (Number.isNaN(ends.getTime())) {
-      return "End date/time is invalid.";
+    if (form.endsAt && Number.isNaN(ends.getTime())) {
+      errors.endsAt = "End date/time is invalid.";
     }
 
-    if (!(ends.getTime() > starts.getTime())) {
-      return "End date/time must be after start date/time.";
+    if (
+      form.startsAt &&
+      form.endsAt &&
+      !Number.isNaN(starts.getTime()) &&
+      !Number.isNaN(ends.getTime()) &&
+      !(ends.getTime() > starts.getTime())
+    ) {
+      errors.endsAt = "End date/time must be after start date/time.";
     }
 
-    return null;
+    return errors;
   };
 
   useEffect(() => {
@@ -114,6 +130,8 @@ export const BookingsPage = () => {
 
   const canCreate = canCreateBooking(user);
 
+  const createErrors = validateBookingFormState(createState);
+
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -128,9 +146,14 @@ export const BookingsPage = () => {
       title: createState.title.trim(),
     };
 
-    const validation = validateBookingFormState(normalizedState);
-    if (validation) {
-      setCreateError(validation);
+    const errors = validateBookingFormState(normalizedState);
+    if (Object.keys(errors).length) {
+      setCreateTouched({
+        title: true,
+        description: true,
+        startsAt: true,
+        endsAt: true,
+      });
       return;
     }
 
@@ -151,6 +174,7 @@ export const BookingsPage = () => {
         startsAt: "",
         endsAt: "",
       });
+      setCreateTouched({});
       setCreateError(null);
     } catch (createError) {
       setCreateError(
@@ -193,9 +217,17 @@ export const BookingsPage = () => {
       title: formState.title.trim(),
     };
 
-    const validation = validateBookingFormState(normalizedState);
-    if (validation) {
-      setBookingErrors((current) => ({ ...current, [bookingId]: validation }));
+    const errors = validateBookingFormState(normalizedState);
+    if (Object.keys(errors).length) {
+      setEditTouched((current) => ({
+        ...current,
+        [bookingId]: {
+          title: true,
+          description: true,
+          startsAt: true,
+          endsAt: true,
+        },
+      }));
       return;
     }
 
@@ -214,6 +246,11 @@ export const BookingsPage = () => {
         [bookingId]: buildBookingFormState(updatedBooking),
       }));
       setBookingErrors((current) => ({ ...current, [bookingId]: "" }));
+      setEditTouched((current) => {
+        const next = { ...current };
+        delete next[bookingId];
+        return next;
+      });
     } catch (saveError) {
       setBookingErrors((current) => ({
         ...current,
@@ -301,9 +338,15 @@ export const BookingsPage = () => {
                   title: event.target.value,
                 }))
               }
+              onBlur={() =>
+                setCreateTouched((current) => ({ ...current, title: true }))
+              }
               placeholder="Booking title"
               value={createState.title}
             />
+            {createTouched.title && createErrors.title ? (
+              <p className="text-sm text-danger">{createErrors.title}</p>
+            ) : null}
             <textarea
               className="min-h-28 w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880] disabled:cursor-not-allowed disabled:bg-slate-100"
               disabled={!canCreate}
@@ -313,9 +356,18 @@ export const BookingsPage = () => {
                   description: event.target.value,
                 }))
               }
+              onBlur={() =>
+                setCreateTouched((current) => ({
+                  ...current,
+                  description: true,
+                }))
+              }
               placeholder="Booking description"
               value={createState.description}
             />
+            {createTouched.description && createErrors.description ? (
+              <p className="text-sm text-danger">{createErrors.description}</p>
+            ) : null}
             <input
               className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:cursor-not-allowed disabled:bg-slate-100"
               disabled={!canCreate}
@@ -325,9 +377,15 @@ export const BookingsPage = () => {
                   startsAt: event.target.value,
                 }))
               }
+              onBlur={() =>
+                setCreateTouched((current) => ({ ...current, startsAt: true }))
+              }
               type="datetime-local"
               value={createState.startsAt}
             />
+            {createTouched.startsAt && createErrors.startsAt ? (
+              <p className="text-sm text-danger">{createErrors.startsAt}</p>
+            ) : null}
             <input
               className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:cursor-not-allowed disabled:bg-slate-100"
               disabled={!canCreate}
@@ -337,9 +395,15 @@ export const BookingsPage = () => {
                   endsAt: event.target.value,
                 }))
               }
+              onBlur={() =>
+                setCreateTouched((current) => ({ ...current, endsAt: true }))
+              }
               type="datetime-local"
               value={createState.endsAt}
             />
+            {createTouched.endsAt && createErrors.endsAt ? (
+              <p className="text-sm text-danger">{createErrors.endsAt}</p>
+            ) : null}
             {createError ? (
               <p className="text-sm text-danger">{createError}</p>
             ) : null}
@@ -357,6 +421,9 @@ export const BookingsPage = () => {
             {bookings.map((booking) => {
               const canEdit = canEditBooking(user, booking);
               const formState = bookingEdits[booking._id];
+              const editErrors = validateBookingFormState(
+                formState ?? buildBookingFormState(booking),
+              );
 
               return (
                 <li key={booking._id}>
@@ -368,8 +435,20 @@ export const BookingsPage = () => {
                         onChange={(event) =>
                           handleEdit(booking._id, "title", event.target.value)
                         }
+                        onBlur={() =>
+                          setEditTouched((current) => ({
+                            ...current,
+                            [booking._id]: {
+                              ...current[booking._id],
+                              title: true,
+                            },
+                          }))
+                        }
                         value={formState?.title ?? booking.title}
                       />
+                      {editTouched[booking._id]?.title && editErrors.title ? (
+                        <p className="text-sm text-danger">{editErrors.title}</p>
+                      ) : null}
                       <textarea
                         className="min-h-24 rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:bg-slate-100 md:col-span-2"
                         disabled={!canEdit}
@@ -380,8 +459,23 @@ export const BookingsPage = () => {
                             event.target.value,
                           )
                         }
+                        onBlur={() =>
+                          setEditTouched((current) => ({
+                            ...current,
+                            [booking._id]: {
+                              ...current[booking._id],
+                              description: true,
+                            },
+                          }))
+                        }
                         value={formState?.description ?? booking.description}
                       />
+                      {editTouched[booking._id]?.description &&
+                      editErrors.description ? (
+                        <p className="text-sm text-danger">
+                          {editErrors.description}
+                        </p>
+                      ) : null}
                       <input
                         className="rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:bg-slate-100"
                         disabled={!canEdit}
@@ -392,17 +486,39 @@ export const BookingsPage = () => {
                             event.target.value,
                           )
                         }
+                        onBlur={() =>
+                          setEditTouched((current) => ({
+                            ...current,
+                            [booking._id]: {
+                              ...current[booking._id],
+                              startsAt: true,
+                            },
+                          }))
+                        }
                         type="datetime-local"
                         value={
                           formState?.startsAt ??
                           formatDateTimeInput(booking.startsAt)
                         }
                       />
+                      {editTouched[booking._id]?.startsAt &&
+                      editErrors.startsAt ? (
+                        <p className="text-sm text-danger">{editErrors.startsAt}</p>
+                      ) : null}
                       <input
                         className="rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:bg-slate-100"
                         disabled={!canEdit}
                         onChange={(event) =>
                           handleEdit(booking._id, "endsAt", event.target.value)
+                        }
+                        onBlur={() =>
+                          setEditTouched((current) => ({
+                            ...current,
+                            [booking._id]: {
+                              ...current[booking._id],
+                              endsAt: true,
+                            },
+                          }))
                         }
                         type="datetime-local"
                         value={
@@ -410,6 +526,9 @@ export const BookingsPage = () => {
                           formatDateTimeInput(booking.endsAt)
                         }
                       />
+                      {editTouched[booking._id]?.endsAt && editErrors.endsAt ? (
+                        <p className="text-sm text-danger">{editErrors.endsAt}</p>
+                      ) : null}
                     </div>
                     {bookingErrors[booking._id] ? (
                       <p className="mt-4 text-sm text-danger">
