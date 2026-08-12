@@ -6,8 +6,8 @@ export const LoginPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, login } = useAuth();
   const [formState, setFormState] = useState({
-    email: "owner@workspacehub.dev",
-    password: "Password123!",
+    email: "",
+    password: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
