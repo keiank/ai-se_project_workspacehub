@@ -168,7 +168,9 @@ export const DashboardPage = () => {
           <div className="rounded-[20px] bg-white p-8 shadow-sm">
             <h2 className="text-xl font-bold text-ink">Feature flags</h2>
             <ul className="mt-4 space-y-3">
-              {(Object.entries(organization?.featureFlags ?? {})as [keyof FeatureFlags, boolean][]).map(([key, value]) => (
+              {(
+                Object.entries(organization?.featureFlags ?? {}) as [keyof FeatureFlags, boolean][]
+              ).map(([key, value]) => (
                 <li
                   className="flex items-center justify-between rounded-[12px] border border-slate-200 p-[18px]"
                   key={key}

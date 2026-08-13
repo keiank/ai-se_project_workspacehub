@@ -21,7 +21,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const message = axios.isAxiosError<ApiResponse<unknown>>(error)
-      ? error.response?.data?.error?.message ?? error.message
+      ? (error.response?.data?.error?.message ?? error.message)
       : error instanceof Error
         ? error.message
         : 'Request failed';
