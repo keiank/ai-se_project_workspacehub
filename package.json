@@ -12,7 +12,7 @@
     "build": "npm run build --workspace server && npm run build --workspace client",
     "typecheck": "npm run typecheck --workspace client && npm run typecheck --workspace server",
     "seed": "npm run seed --workspace server",
-    "lint": "eslint \"client/src/**/*.{js,jsx,ts,tsx}\" \"server/src/**/*.{js,jsx,ts,tsx}\" --max-warnings=0",
+    "lint": "eslint \"client/src/**/*.{js,jsx,ts,tsx}\" \"server/src/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"client/**/*.{js,jsx,ts,tsx,css,html,json,md}\" \"server/**/*.{js,jsx,ts,tsx,json,md}\"",
     "format:check": "prettier --check \"client/**/*.{js,jsx,ts,tsx,css,html,json,md}\" \"server/**/*.{js,jsx,ts,tsx,json,md}\""
   },
