@@ -1,11 +1,11 @@
-interface BookingFormState {
+export interface BookingFormState {
   title: string;
   description: string;
   startsAt: string;
   endsAt: string;
 }
 
-type BookingFormErrors = Partial<Record<keyof BookingFormState, string>>;
+export type BookingFormErrors = Partial<Record<keyof BookingFormState, string>>;
 
 export const validateBookingFormState = (form: BookingFormState): BookingFormErrors => {
   const errors: BookingFormErrors = {};
