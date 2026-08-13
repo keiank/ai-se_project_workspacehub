@@ -21,9 +21,10 @@ export const updateUser = async (
   userId: string,
   payload: Record<string, unknown>,
 ) => {
+  const organizationId: string | undefined = typeof actor.organizationId === 'string' ? actor.organizationId : undefined;
   const found = await User.findOne({
     _id: userId,
-    organizationId: actor.organizationId,
+    organizationId,
   });
   const user = assertFound(found, 'User');
 
