@@ -1,4 +1,4 @@
-import { Schema, model, Types, type InferSchemaType } from "mongoose";
+import { Schema, model, Types, type InferSchemaType } from 'mongoose';
 
 const userSchema = new Schema(
   {
@@ -25,12 +25,12 @@ const userSchema = new Schema(
     },
     organizationId: {
       type: Schema.Types.ObjectId,
-      ref: "Organization",
+      ref: 'Organization',
       required: true,
     },
     role: {
       type: String,
-      enum: ["owner", "admin", "member"],
+      enum: ['owner', 'admin', 'member'],
       required: true,
     },
   },
@@ -43,4 +43,4 @@ export type UserDocument = InferSchemaType<typeof userSchema> & {
   _id: Types.ObjectId;
 };
 
-export const User = model<UserDocument>("User", userSchema);
+export const User = model<UserDocument>('User', userSchema);

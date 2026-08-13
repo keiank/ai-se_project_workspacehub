@@ -1,6 +1,6 @@
 export const formatDateTime = (value: string | null | undefined) => {
   if (!value) {
-    return "Not set";
+    return 'Not set';
   }
 
   return new Date(value).toLocaleString();
@@ -8,20 +8,20 @@ export const formatDateTime = (value: string | null | undefined) => {
 
 export const formatDateInput = (value: string | null | undefined) => {
   if (!value) {
-    return "";
+    return '';
   }
 
   const date = new Date(value);
   const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  const day = `${date.getDate()}`.padStart(2, "0");
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
 
   return `${year}-${month}-${day}`;
 };
 
 export const formatDateTimeInput = (value: string | null | undefined) => {
   if (!value) {
-    return "";
+    return '';
   }
 
   return new Date(value).toISOString().slice(0, 16);

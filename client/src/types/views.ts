@@ -1,2 +1,2 @@
-import type { Project } from "./models";
+import type { Project } from './models';
 export type ProjectWithTaskCount = Project & { taskCount: number };

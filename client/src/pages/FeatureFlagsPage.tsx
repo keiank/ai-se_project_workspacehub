@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Checkbox } from "../components/Checkbox";
-import { PageHeader } from "../components/PageHeader";
-import { useAuth } from "../hooks/useAuth";
-import { organizationService } from "../services/organizationService";
-import type { FeatureFlags } from "../types/models";
-import { isPrivilegedRole } from "../utils/permissions";
+import { useState } from 'react';
+import { Checkbox } from '../components/Checkbox';
+import { PageHeader } from '../components/PageHeader';
+import { useAuth } from '../hooks/useAuth';
+import { organizationService } from '../services/organizationService';
+import type { FeatureFlags } from '../types/models';
+import { isPrivilegedRole } from '../utils/permissions';
 
 export const FeatureFlagsPage = () => {
   const { organization, setOrganizationState, user } = useAuth();
@@ -22,17 +22,12 @@ export const FeatureFlagsPage = () => {
     setStatus(null);
 
     try {
-      const nextOrganization =
-        await organizationService.updateFeatureFlags(flags);
+      const nextOrganization = await organizationService.updateFeatureFlags(flags);
       setOrganizationState(nextOrganization);
       setFlags(nextOrganization.featureFlags);
-      setStatus("Feature flags updated.");
+      setStatus('Feature flags updated.');
     } catch (saveError) {
-      setStatus(
-        saveError instanceof Error
-          ? saveError.message
-          : "Unable to update flags",
-      );
+      setStatus(saveError instanceof Error ? saveError.message : 'Unable to update flags');
     }
   };
 
@@ -51,7 +46,7 @@ export const FeatureFlagsPage = () => {
             >
               <div>
                 <p className="text-xl font-semibold text-ink">
-                  {flagKey.replace(/([A-Z])/g, " $1")}
+                  {flagKey.replace(/([A-Z])/g, ' $1')}
                 </p>
                 <p className="text-[13px] text-slate-500">
                   Toggle organization access for this feature area.
@@ -70,16 +65,14 @@ export const FeatureFlagsPage = () => {
             </li>
           ))}
         </ul>
-        {status ? (
-          <p className="mt-4 text-sm text-slate-600">{status}</p>
-        ) : null}
+        {status ? <p className="mt-4 text-sm text-slate-600">{status}</p> : null}
         <button
           className="mt-6 rounded-[12px] bg-ink px-6 py-3 font-medium text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={!canEdit}
           onClick={() => void handleSave()}
           type="button"
         >
-          {canEdit ? "Save flags" : "Owners and admins only"}
+          {canEdit ? 'Save flags' : 'Owners and admins only'}
         </button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 interface PageHeaderProps {
   title: string;
@@ -6,11 +6,7 @@ interface PageHeaderProps {
   actions?: ReactNode;
 }
 
-export const PageHeader = ({
-  title,
-  description,
-  actions,
-}: PageHeaderProps) => {
+export const PageHeader = ({ title, description, actions }: PageHeaderProps) => {
   return (
     <div className="flex flex-col gap-2 rounded-[20px] bg-gradient-to-r from-ink via-slate-800 to-[#1f4d45] py-5 px-8 text-white shadow-lg md:flex-row md:items-end md:justify-between">
       <div>

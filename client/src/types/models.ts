@@ -1,8 +1,8 @@
-export type UserRole = "owner" | "admin" | "member";
+export type UserRole = 'owner' | 'admin' | 'member';
 
-export type TaskStatus = "todo" | "in_progress" | "done";
+export type TaskStatus = 'todo' | 'in_progress' | 'done';
 
-export type TaskPriority = "low" | "medium" | "high";
+export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface FeatureFlags {
   scheduling: boolean;
@@ -40,7 +40,7 @@ export interface Project {
   updatedAt: string;
 }
 
-export type ProjectCreatePayload = Pick<Project, "name" | "description">;
+export type ProjectCreatePayload = Pick<Project, 'name' | 'description'>;
 
 export type ProjectUpdatePayload = Partial<ProjectCreatePayload>;
 
@@ -60,13 +60,7 @@ export interface Task {
 
 export type TaskCreatePayload = Pick<
   Task,
-  | "projectId"
-  | "title"
-  | "description"
-  | "status"
-  | "priority"
-  | "assignedTo"
-  | "dueDate"
+  'projectId' | 'title' | 'description' | 'status' | 'priority' | 'assignedTo' | 'dueDate'
 >;
 
 export type TaskUpdatePayload = Partial<TaskCreatePayload>;

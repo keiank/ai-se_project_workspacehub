@@ -1,5 +1,5 @@
-import type { Project, Task } from "../types/models";
-import type { ProjectWithTaskCount } from "../types/views";
+import type { Project, Task } from '../types/models';
+import type { ProjectWithTaskCount } from '../types/views';
 
 export const buildProjectWithTaskCount = (
   project: Project,

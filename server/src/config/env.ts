@@ -1,11 +1,11 @@
-import path from "path";
-import dotenv from "dotenv";
+import path from 'path';
+import dotenv from 'dotenv';
 
 dotenv.config({
-  path: path.resolve(__dirname, "../../.env"),
+  path: path.resolve(__dirname, '../../.env'),
 });
 
-const requiredKeys = ["MONGODB_URI", "JWT_SECRET", "CLIENT_ORIGIN"] as const;
+const requiredKeys = ['MONGODB_URI', 'JWT_SECRET', 'CLIENT_ORIGIN'] as const;
 
 for (const key of requiredKeys) {
   if (!process.env[key]) {

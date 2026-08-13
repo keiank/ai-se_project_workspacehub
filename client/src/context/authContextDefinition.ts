@@ -1,11 +1,6 @@
-import { createContext } from "react";
-import type { LoginPayload, RegisterPayload } from "../services/authService";
-import type {
-  FeatureFlags,
-  Organization,
-  User,
-  UserRole,
-} from "../types/models";
+import { createContext } from 'react';
+import type { LoginPayload, RegisterPayload } from '../services/authService';
+import type { FeatureFlags, Organization, User, UserRole } from '../types/models';
 
 export interface AuthContextValue {
   token: string | null;
@@ -22,6 +17,4 @@ export interface AuthContextValue {
   isFeatureEnabled: (featureKey: keyof FeatureFlags) => boolean;
 }
 
-export const AuthContext = createContext<AuthContextValue | undefined>(
-  undefined,
-);
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined);

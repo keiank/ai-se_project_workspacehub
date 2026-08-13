@@ -1,19 +1,19 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
-import { PageHeader } from "../components/PageHeader";
-import { StatusPanel } from "../components/StatusPanel";
-import { projectService } from "../services/projectService";
-import { taskService } from "../services/taskService";
-import { ProjectCreatePayload } from "../types/models";
-import type { ProjectWithTaskCount } from "../types/views";
-import { useAuth } from "../hooks/useAuth";
-import { canDeleteResources, canCreateProject } from "../utils/permissions";
-import { buildProjectWithTaskCount } from "../utils/projectMetrics";
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { PageHeader } from '../components/PageHeader';
+import { StatusPanel } from '../components/StatusPanel';
+import { projectService } from '../services/projectService';
+import { taskService } from '../services/taskService';
+import { ProjectCreatePayload } from '../types/models';
+import type { ProjectWithTaskCount } from '../types/views';
+import { useAuth } from '../hooks/useAuth';
+import { canDeleteResources, canCreateProject } from '../utils/permissions';
+import { buildProjectWithTaskCount } from '../utils/projectMetrics';
 
 export const ProjectsPage = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState<ProjectWithTaskCount[]>([]);
-  const [formState, setFormState] = useState<ProjectCreatePayload>({ name: "", description: "" });
+  const [formState, setFormState] = useState<ProjectCreatePayload>({ name: '', description: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -24,18 +24,13 @@ export const ProjectsPage = () => {
     setLoadError(null);
 
     try {
-      const [nextProjects, tasks] = await Promise.all([
-        projectService.list(),
-        taskService.list(),
-      ]);
-      const projectsWithCounts: ProjectWithTaskCount[] = nextProjects.map(
-        (project) => buildProjectWithTaskCount(project, tasks),
+      const [nextProjects, tasks] = await Promise.all([projectService.list(), taskService.list()]);
+      const projectsWithCounts: ProjectWithTaskCount[] = nextProjects.map((project) =>
+        buildProjectWithTaskCount(project, tasks),
       );
       setProjects(projectsWithCounts);
     } catch (error) {
-      setLoadError(
-        error instanceof Error ? error.message : "Unable to load projects",
-      );
+      setLoadError(error instanceof Error ? error.message : 'Unable to load projects');
     } finally {
       setLoading(false);
     }
@@ -57,12 +52,10 @@ export const ProjectsPage = () => {
         taskCount: 0,
       };
       setProjects((current) => [withCount, ...current]);
-      setFormState({ name: "", description: "" });
+      setFormState({ name: '', description: '' });
     } catch (submitError) {
       setActionError(
-        submitError instanceof Error
-          ? submitError.message
-          : "Unable to create project",
+        submitError instanceof Error ? submitError.message : 'Unable to create project',
       );
     } finally {
       setSaving(false);
@@ -73,28 +66,20 @@ export const ProjectsPage = () => {
     setActionError(null);
     try {
       await projectService.delete(projectId);
-      setProjects((current) =>
-        current.filter((project) => project._id !== projectId),
-      );
+      setProjects((current) => current.filter((project) => project._id !== projectId));
     } catch (deleteError) {
       setActionError(
-        deleteError instanceof Error
-          ? deleteError.message
-          : "Unable to delete project",
+        deleteError instanceof Error ? deleteError.message : 'Unable to delete project',
       );
     }
   };
 
   if (loading) {
-    return (
-      <StatusPanel title="Loading projects" message="Fetching project list." />
-    );
+    return <StatusPanel title="Loading projects" message="Fetching project list." />;
   }
 
   if (loadError) {
-    return (
-      <StatusPanel title="Projects unavailable" message={loadError} />
-    );
+    return <StatusPanel title="Projects unavailable" message={loadError} />;
   }
 
   return (
@@ -105,10 +90,7 @@ export const ProjectsPage = () => {
       />
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         {canCreateProject(user) ? (
-          <form
-            className="rounded-3xl bg-white p-6 shadow-sm"
-            onSubmit={handleSubmit}
-          >
+          <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={handleSubmit}>
             <h2 className="text-xl font-semibold text-ink">Create project</h2>
             <div className="mt-4 space-y-4">
               <input
@@ -139,7 +121,7 @@ export const ProjectsPage = () => {
                 disabled={saving}
                 type="submit"
               >
-                {saving ? "Creating..." : "Create project"}
+                {saving ? 'Creating...' : 'Create project'}
               </button>
             </div>
           </form>
@@ -156,14 +138,10 @@ export const ProjectsPage = () => {
                 <article className="rounded-3xl bg-white p-6 shadow-sm">
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <h2 className="text-xl font-semibold text-ink">
-                        {project.name}
-                      </h2>
-                      <p className="mt-2 text-sm text-slate-600">
-                        {project.description}
-                      </p>
+                      <h2 className="text-xl font-semibold text-ink">{project.name}</h2>
+                      <p className="mt-2 text-sm text-slate-600">{project.description}</p>
                       <p className="mt-1 text-sm text-slate-500">
-                        {project.taskCount} {project.taskCount === 1 ? "task" : "tasks"}
+                        {project.taskCount} {project.taskCount === 1 ? 'task' : 'tasks'}
                       </p>
                     </div>
                     <div className="flex gap-2">

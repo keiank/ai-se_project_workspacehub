@@ -1,17 +1,17 @@
-import { useState, type FormEvent } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useState, type FormEvent } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, register } = useAuth();
   const [formState, setFormState] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    organizationName: "",
-    organizationSlug: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    organizationName: '',
+    organizationSlug: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,13 +27,9 @@ export const RegisterPage = () => {
 
     try {
       await register(formState);
-      navigate("/");
+      navigate('/');
     } catch (submitError) {
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "Registration failed",
-      );
+      setError(submitError instanceof Error ? submitError.message : 'Registration failed');
     } finally {
       setSubmitting(false);
     }
@@ -44,10 +40,7 @@ export const RegisterPage = () => {
       <div className="w-full max-w-2xl rounded-[2rem] bg-white p-8 shadow-xl">
         <p className="text-sm uppercase text-accent">Create Workspace</p>
         <h1 className="mt-3 text-3xl font-semibold text-ink">Register</h1>
-        <form
-          className="mt-8 grid gap-4 md:grid-cols-2"
-          onSubmit={handleSubmit}
-        >
+        <form className="mt-8 grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
           <input
             className="rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880]"
             onChange={(event) =>
@@ -117,23 +110,19 @@ export const RegisterPage = () => {
               placeholder="url-org-identifier ex: (tripleten)"
               value={formState.organizationSlug}
             />
-            <p className="text-xs text-slate-500">
-              url-org-identifier ex: (tripleten)
-            </p>
+            <p className="text-xs text-slate-500">url-org-identifier ex: (tripleten)</p>
           </div>
-          {error ? (
-            <p className="text-sm text-danger md:col-span-2">{error}</p>
-          ) : null}
+          {error ? <p className="text-sm text-danger md:col-span-2">{error}</p> : null}
           <button
             className="rounded-[12px] bg-ink px-4 py-3 font-medium text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50 md:col-span-2"
             disabled={submitting}
             type="submit"
           >
-            {submitting ? "Creating workspace..." : "Create workspace"}
+            {submitting ? 'Creating workspace...' : 'Create workspace'}
           </button>
         </form>
         <p className="mt-6 text-sm text-slate-600">
-          Already have an account?{" "}
+          Already have an account?{' '}
           <Link
             className="font-medium text-brand transition hover:underline active:opacity-70"
             to="/login"

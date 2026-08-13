@@ -1,13 +1,13 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { PageHeader } from "../components/PageHeader";
-import { StatusPanel } from "../components/StatusPanel";
-import { projectService } from "../services/projectService";
-import { taskService } from "../services/taskService";
-import { useAuth } from "../hooks/useAuth";
-import type { Project, Task } from "../types/models";
-import { formatDateTime } from "../utils/date";
-import { canDeleteResources, canEditProject } from "../utils/permissions";
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { PageHeader } from '../components/PageHeader';
+import { StatusPanel } from '../components/StatusPanel';
+import { projectService } from '../services/projectService';
+import { taskService } from '../services/taskService';
+import { useAuth } from '../hooks/useAuth';
+import type { Project, Task } from '../types/models';
+import { formatDateTime } from '../utils/date';
+import { canDeleteResources, canEditProject } from '../utils/permissions';
 
 export const ProjectDetailsPage = () => {
   const { id } = useParams();
@@ -15,7 +15,7 @@ export const ProjectDetailsPage = () => {
   const { user } = useAuth();
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [formState, setFormState] = useState({ name: "", description: "" });
+  const [formState, setFormState] = useState({ name: '', description: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,11 +42,7 @@ export const ProjectDetailsPage = () => {
           description: nextProject.description,
         });
       } catch (loadError) {
-        setError(
-          loadError instanceof Error
-            ? loadError.message
-            : "Unable to load project",
-        );
+        setError(loadError instanceof Error ? loadError.message : 'Unable to load project');
       } finally {
         setLoading(false);
       }
@@ -66,17 +62,10 @@ export const ProjectDetailsPage = () => {
     setError(null);
 
     try {
-      const updatedProject = await projectService.update(
-        project._id,
-        formState,
-      );
+      const updatedProject = await projectService.update(project._id, formState);
       setProject(updatedProject);
     } catch (saveError) {
-      setError(
-        saveError instanceof Error
-          ? saveError.message
-          : "Unable to update project",
-      );
+      setError(saveError instanceof Error ? saveError.message : 'Unable to update project');
     } finally {
       setSaving(false);
     }
@@ -89,31 +78,19 @@ export const ProjectDetailsPage = () => {
 
     try {
       await projectService.delete(project._id);
-      navigate("/projects");
+      navigate('/projects');
     } catch (deleteError) {
-      setError(
-        deleteError instanceof Error
-          ? deleteError.message
-          : "Unable to delete project",
-      );
+      setError(deleteError instanceof Error ? deleteError.message : 'Unable to delete project');
     }
   };
 
   if (loading) {
-    return (
-      <StatusPanel
-        title="Loading project"
-        message="Fetching project details."
-      />
-    );
+    return <StatusPanel title="Loading project" message="Fetching project details." />;
   }
 
   if (!project) {
     return (
-      <StatusPanel
-        title="Project not found"
-        message={error ?? "No project matched this route."}
-      />
+      <StatusPanel title="Project not found" message={error ?? 'No project matched this route.'} />
     );
   }
 
@@ -126,10 +103,7 @@ export const ProjectDetailsPage = () => {
         title={project.name}
       />
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <form
-          className="rounded-3xl bg-white p-6 shadow-sm"
-          onSubmit={handleSave}
-        >
+        <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={handleSave}>
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-ink">Project settings</h2>
             {canDeleteResources(user) ? (
@@ -171,7 +145,7 @@ export const ProjectDetailsPage = () => {
               disabled={!canEdit || saving}
               type="submit"
             >
-              {saving ? "Saving..." : canEdit ? "Save changes" : "Read only"}
+              {saving ? 'Saving...' : canEdit ? 'Save changes' : 'Read only'}
             </button>
           </div>
         </form>
@@ -193,15 +167,11 @@ export const ProjectDetailsPage = () => {
                     <article className="rounded-2xl border border-slate-200 p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div>
-                          <h3 className="font-medium text-ink">
-                            {task.title}
-                          </h3>
-                          <p className="mt-1 text-sm text-slate-500">
-                            {task.description}
-                          </p>
+                          <h3 className="font-medium text-ink">{task.title}</h3>
+                          <p className="mt-1 text-sm text-slate-500">{task.description}</p>
                         </div>
                         <span className="rounded-[10px] bg-slate-100 px-3 py-1 text-xs font-medium uppercase tracking-wide text-slate-600">
-                          {task.status.replace("_", " ")}
+                          {task.status.replace('_', ' ')}
                         </span>
                       </div>
                       <p className="mt-3 text-sm text-slate-500">

@@ -1,6 +1,6 @@
-import { app } from "./app";
-import { connectToDatabase } from "./config/database";
-import { env } from "./config/env";
+import { app } from './app';
+import { connectToDatabase } from './config/database';
+import { env } from './config/env';
 
 const start = async () => {
   await connectToDatabase();
@@ -9,8 +9,8 @@ const start = async () => {
     console.log(`Server listening on port ${env.port}`);
   });
 
-  server.on("error", (error: NodeJS.ErrnoException) => {
-    if (error.code === "EADDRINUSE") {
+  server.on('error', (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EADDRINUSE') {
       console.error(
         `Port ${env.port} is already in use. Update server/.env with a different PORT value.`,
       );

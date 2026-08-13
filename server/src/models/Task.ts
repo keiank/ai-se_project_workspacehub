@@ -1,15 +1,15 @@
-import { Schema, model, Types, type InferSchemaType } from "mongoose";
+import { Schema, model, Types, type InferSchemaType } from 'mongoose';
 
 const taskSchema = new Schema(
   {
     organizationId: {
       type: Schema.Types.ObjectId,
-      ref: "Organization",
+      ref: 'Organization',
       required: true,
     },
     projectId: {
       type: Schema.Types.ObjectId,
-      ref: "Project",
+      ref: 'Project',
       required: true,
     },
     title: {
@@ -19,22 +19,22 @@ const taskSchema = new Schema(
     },
     description: {
       type: String,
-      default: "",
+      default: '',
       trim: true,
     },
     status: {
       type: String,
-      enum: ["todo", "in_progress", "done"],
-      default: "todo",
+      enum: ['todo', 'in_progress', 'done'],
+      default: 'todo',
     },
     priority: {
       type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium",
+      enum: ['low', 'medium', 'high'],
+      default: 'medium',
     },
     assignedTo: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       default: null,
     },
     dueDate: {
@@ -51,4 +51,4 @@ export type TaskDocument = InferSchemaType<typeof taskSchema> & {
   _id: Types.ObjectId;
 };
 
-export const Task = model<TaskDocument>("Task", taskSchema);
+export const Task = model<TaskDocument>('Task', taskSchema);

@@ -1,6 +1,6 @@
-import type { Request, Response } from "express";
-import { login, getCurrentAuthUser, register } from "../services/authService";
-import { sendSuccess } from "../utils/apiResponse";
+import type { Request, Response } from 'express';
+import { login, getCurrentAuthUser, register } from '../services/authService';
+import { sendSuccess } from '../utils/apiResponse';
 
 export const registerController = async (
   req: Request<Record<string, string>, unknown, Record<string, unknown>>,

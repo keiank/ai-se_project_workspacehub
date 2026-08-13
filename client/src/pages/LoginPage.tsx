@@ -1,13 +1,13 @@
-import { useState, type FormEvent } from "react";
-import { Navigate, Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useState, type FormEvent } from 'react';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, login } = useAuth();
   const [formState, setFormState] = useState({
-    email: "owner@workspacehub.dev",
-    password: "Password123!",
+    email: 'owner@workspacehub.dev',
+    password: 'Password123!',
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,11 +23,9 @@ export const LoginPage = () => {
 
     try {
       await login(formState);
-      navigate("/");
+      navigate('/');
     } catch (submitError) {
-      setError(
-        submitError instanceof Error ? submitError.message : "Login failed",
-      );
+      setError(submitError instanceof Error ? submitError.message : 'Login failed');
     } finally {
       setSubmitting(false);
     }
@@ -43,9 +41,7 @@ export const LoginPage = () => {
         </p>
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Email
-            </label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Email</label>
             <input
               className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3"
               onChange={(event) =>
@@ -59,9 +55,7 @@ export const LoginPage = () => {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              Password
-            </label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Password</label>
             <input
               className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3"
               onChange={(event) =>
@@ -80,11 +74,11 @@ export const LoginPage = () => {
             disabled={submitting}
             type="submit"
           >
-            {submitting ? "Signing in..." : "Sign in"}
+            {submitting ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
         <p className="mt-6 text-sm text-slate-600">
-          Need a workspace?{" "}
+          Need a workspace?{' '}
           <Link
             className="font-medium text-brand transition hover:underline active:opacity-70"
             to="/register"

@@ -1,10 +1,10 @@
-import { Schema, model, Types, type InferSchemaType } from "mongoose";
+import { Schema, model, Types, type InferSchemaType } from 'mongoose';
 
 const bookingSchema = new Schema(
   {
     organizationId: {
       type: Schema.Types.ObjectId,
-      ref: "Organization",
+      ref: 'Organization',
       required: true,
     },
     title: {
@@ -14,7 +14,7 @@ const bookingSchema = new Schema(
     },
     description: {
       type: String,
-      default: "",
+      default: '',
       trim: true,
     },
     startsAt: {
@@ -27,7 +27,7 @@ const bookingSchema = new Schema(
     },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
   },
@@ -40,4 +40,4 @@ export type BookingDocument = InferSchemaType<typeof bookingSchema> & {
   _id: Types.ObjectId;
 };
 
-export const Booking = model<BookingDocument>("Booking", bookingSchema);
+export const Booking = model<BookingDocument>('Booking', bookingSchema);

@@ -1,17 +1,13 @@
-import { Organization } from "../models/Organization";
-import type { FeatureFlags } from "../types/domain";
-import { AppError } from "../utils/appError";
-import {
-  parseBoolean,
-  requireSlug,
-  requireStringLength,
-} from "../utils/validators";
+import { Organization } from '../models/Organization';
+import type { FeatureFlags } from '../types/domain';
+import { AppError } from '../utils/appError';
+import { parseBoolean, requireSlug, requireStringLength } from '../utils/validators';
 
 export const getCurrentOrganization = async (organizationId: string) => {
   const organization = await Organization.findById(organizationId);
 
   if (!organization) {
-    throw new AppError("Organization not found", 404);
+    throw new AppError('Organization not found', 404);
   }
 
   return organization;
@@ -24,7 +20,7 @@ export const updateCurrentOrganization = async (
   const organization = await getCurrentOrganization(organizationId);
 
   if (payload.name !== undefined) {
-    organization.name = requireStringLength(payload.name, "Name", 2);
+    organization.name = requireStringLength(payload.name, 'Name', 2);
   }
 
   if (payload.slug !== undefined) {
@@ -35,7 +31,7 @@ export const updateCurrentOrganization = async (
     });
 
     if (duplicate) {
-      throw new AppError("An organization with this slug already exists", 409);
+      throw new AppError('An organization with this slug already exists', 409);
     }
 
     organization.slug = nextSlug;
@@ -60,15 +56,15 @@ export const updateOrganizationFeatureFlags = async (
     scheduling:
       payload.scheduling === undefined
         ? currentFlags.scheduling
-        : parseBoolean(payload.scheduling, "scheduling"),
+        : parseBoolean(payload.scheduling, 'scheduling'),
     advancedReports:
       payload.advancedReports === undefined
         ? currentFlags.advancedReports
-        : parseBoolean(payload.advancedReports, "advancedReports"),
+        : parseBoolean(payload.advancedReports, 'advancedReports'),
     customBranding:
       payload.customBranding === undefined
         ? currentFlags.customBranding
-        : parseBoolean(payload.customBranding, "customBranding"),
+        : parseBoolean(payload.customBranding, 'customBranding'),
   };
 
   organization.featureFlags = nextFeatureFlags;

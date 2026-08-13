@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useEffect, useState } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const navClassName = ({ isActive }: { isActive: boolean }) =>
   [
     // Below `sm` links render as full-width stacked rows (block + list
     // stretch); from `sm` up they shrink back to inline pills.
-    "block px-4 py-2.5 text-sm transition active:opacity-70 sm:py-2",
+    'block px-4 py-2.5 text-sm transition active:opacity-70 sm:py-2',
     isActive
-      ? "pointer-events-none rounded-[28px] border border-slate-200 bg-white font-semibold text-ink"
-      : "rounded-[8px] font-medium text-ink sm:text-slate-500 sm:hover:text-ink",
-  ].join(" ");
+      ? 'pointer-events-none rounded-[28px] border border-slate-200 bg-white font-semibold text-ink'
+      : 'rounded-[8px] font-medium text-ink sm:text-slate-500 sm:hover:text-ink',
+  ].join(' ');
 
 const logoutButtonClassName =
-  "rounded-[12px] bg-ink px-[18px] py-2.5 text-sm font-medium text-white transition hover:opacity-80 active:opacity-70";
+  'rounded-[12px] bg-ink px-[18px] py-2.5 text-sm font-medium text-white transition hover:opacity-80 active:opacity-70';
 
 /**
  * App layout with a responsive header.
@@ -36,19 +36,19 @@ export const AppShell = () => {
   // breakpoint, so the menu isn't left open (or reopened) after resizing.
   // Keep this width in sync with `screens.nav` in tailwind.config.js.
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 1080px)");
+    const query = window.matchMedia('(min-width: 1080px)');
     const handleChange = (event: MediaQueryListEvent) => {
       if (event.matches) {
         setMenuOpen(false);
       }
     };
-    query.addEventListener("change", handleChange);
-    return () => query.removeEventListener("change", handleChange);
+    query.addEventListener('change', handleChange);
+    return () => query.removeEventListener('change', handleChange);
   }, []);
 
   const initials = [user?.firstName?.[0], user?.lastName?.[0]]
     .filter(Boolean)
-    .join("")
+    .join('')
     .toUpperCase();
 
   const avatar = (
@@ -75,9 +75,7 @@ export const AppShell = () => {
         <header className="p-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase text-brand">
-                {organization?.slug}
-              </p>
+              <p className="text-xs font-bold uppercase text-brand">{organization?.slug}</p>
               <p className="text-2xl font-extrabold text-ink">WorkspaceHub</p>
             </div>
             {/* `order-last w-full` drops the nav onto its own row below the
@@ -85,9 +83,9 @@ export const AppShell = () => {
                 sitting inline between the logo and the user section. */}
             <nav
               className={[
-                "order-last w-full nav:order-none nav:block nav:w-auto",
-                menuOpen ? "" : "hidden",
-              ].join(" ")}
+                'order-last w-full nav:order-none nav:block nav:w-auto',
+                menuOpen ? '' : 'hidden',
+              ].join(' ')}
               id="primary-nav"
             >
               <ul className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-2">
@@ -97,49 +95,29 @@ export const AppShell = () => {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink
-                    className={navClassName}
-                    onClick={closeMenu}
-                    to="/projects"
-                  >
+                  <NavLink className={navClassName} onClick={closeMenu} to="/projects">
                     Projects
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink
-                    className={navClassName}
-                    onClick={closeMenu}
-                    to="/tasks"
-                  >
+                  <NavLink className={navClassName} onClick={closeMenu} to="/tasks">
                     Tasks
                   </NavLink>
                 </li>
-                {isFeatureEnabled("scheduling") ? (
+                {isFeatureEnabled('scheduling') ? (
                   <li>
-                    <NavLink
-                      className={navClassName}
-                      onClick={closeMenu}
-                      to="/bookings"
-                    >
+                    <NavLink className={navClassName} onClick={closeMenu} to="/bookings">
                       Bookings
                     </NavLink>
                   </li>
                 ) : null}
                 <li>
-                  <NavLink
-                    className={navClassName}
-                    onClick={closeMenu}
-                    to="/settings/organization"
-                  >
+                  <NavLink className={navClassName} onClick={closeMenu} to="/settings/organization">
                     Organization
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink
-                    className={navClassName}
-                    onClick={closeMenu}
-                    to="/settings/features"
-                  >
+                  <NavLink className={navClassName} onClick={closeMenu} to="/settings/features">
                     Feature Flags
                   </NavLink>
                 </li>
@@ -156,11 +134,7 @@ export const AppShell = () => {
                     <p className="text-xs text-slate-500">{user?.email}</p>
                   </div>
                 </div>
-                <button
-                  className={logoutButtonClassName}
-                  onClick={logout}
-                  type="button"
-                >
+                <button className={logoutButtonClassName} onClick={logout} type="button">
                   Log out
                 </button>
               </div>
@@ -177,7 +151,7 @@ export const AppShell = () => {
               <button
                 aria-controls="primary-nav"
                 aria-expanded={menuOpen}
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 className="rounded-[8px] border border-slate-200 bg-white p-2.5 text-ink transition hover:bg-slate-50 active:opacity-70 nav:hidden"
                 onClick={() => setMenuOpen((open) => !open)}
                 type="button"

@@ -1,7 +1,7 @@
-import type { AuthPayload, UserRole } from "../types/domain";
+import type { AuthPayload, UserRole } from '../types/domain';
 
 export const isPrivilegedRole = (role: UserRole): boolean => {
-  return role === "owner" || role === "admin";
+  return role === 'owner' || role === 'admin';
 };
 
 export const canManageProject = (
@@ -29,10 +29,7 @@ export const canDeleteResource = (actor: AuthPayload): boolean => {
   return isPrivilegedRole(actor.role);
 };
 
-export const canManageUsers = (
-  actor: AuthPayload,
-  targetUserId: string,
-): boolean => {
+export const canManageUsers = (actor: AuthPayload, targetUserId: string): boolean => {
   return isPrivilegedRole(actor.role) || actor.userId === targetUserId;
 };
 
@@ -45,10 +42,7 @@ export const canChangeUserRole = (
     return false;
   }
 
-  if (
-    actor.role === "admin" &&
-    (targetRole === "owner" || currentTargetRole === "owner")
-  ) {
+  if (actor.role === 'admin' && (targetRole === 'owner' || currentTargetRole === 'owner')) {
     return false;
   }
 

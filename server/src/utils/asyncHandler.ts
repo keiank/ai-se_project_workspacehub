@@ -1,10 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from 'express';
 
-type AsyncController = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => Promise<unknown>;
+type AsyncController = (req: Request, res: Response, next: NextFunction) => Promise<unknown>;
 
 export const asyncHandler = (handler: AsyncController) => {
   return (req: Request, res: Response, next: NextFunction) => {
