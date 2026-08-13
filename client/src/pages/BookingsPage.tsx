@@ -276,7 +276,7 @@ export const BookingsPage = () => {
         title="Bookings"
       />
       <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-        <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={handleCreate}>
+        <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={(e) => void handleCreate(e)}>
           <h2 className="text-xl font-semibold text-ink">Create booking</h2>
           <div className="mt-4 space-y-4">
             <input

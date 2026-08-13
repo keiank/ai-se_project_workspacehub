@@ -32,7 +32,7 @@ export const OrganizationSettingsPage = () => {
         description="Maintain the tenant identity that scopes every protected resource."
         title="Organization settings"
       />
-      <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={handleSubmit}>
+      <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={(e) => void handleSubmit(e)}>
         <div className="space-y-4">
           <input
             className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:bg-slate-100"

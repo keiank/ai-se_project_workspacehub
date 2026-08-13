@@ -103,7 +103,7 @@ export const ProjectDetailsPage = () => {
         title={project.name}
       />
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={handleSave}>
+        <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={(e) => void handleSave(e)}>
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-ink">Project settings</h2>
             {canDeleteResources(user) ? (

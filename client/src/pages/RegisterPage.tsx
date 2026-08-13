@@ -40,7 +40,7 @@ export const RegisterPage = () => {
       <div className="w-full max-w-2xl rounded-[2rem] bg-white p-8 shadow-xl">
         <p className="text-sm uppercase text-accent">Create Workspace</p>
         <h1 className="mt-3 text-3xl font-semibold text-ink">Register</h1>
-        <form className="mt-8 grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
+        <form className="mt-8 grid gap-4 md:grid-cols-2" onSubmit={(e) => void handleSubmit(e)}>
           <input
             className="rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880]"
             onChange={(event) =>
