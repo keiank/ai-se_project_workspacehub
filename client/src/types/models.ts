@@ -58,6 +58,8 @@ export interface Task {
   updatedAt: string;
 }
 
+export type TaskWithCommentCount = Task & { commentCount: number };
+
 export type TaskCreatePayload = Pick<
   Task,
   'projectId' | 'title' | 'description' | 'status' | 'priority' | 'assignedTo' | 'dueDate'

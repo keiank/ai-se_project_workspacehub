@@ -1,9 +1,14 @@
 import { api, unwrapResponse } from './api';
-import type { Task, TaskCreatePayload, TaskUpdatePayload } from '../types/models';
+import type {
+  Task,
+  TaskCreatePayload,
+  TaskUpdatePayload,
+  TaskWithCommentCount,
+} from '../types/models';
 
 export const taskService = {
   list: (projectId?: string) =>
-    unwrapResponse<Task[]>(
+    unwrapResponse<TaskWithCommentCount[]>(
       api.get('/tasks', {
         params: projectId ? { projectId } : undefined,
       }),

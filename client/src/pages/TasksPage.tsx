@@ -1,11 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { StatusPanel } from '../components/StatusPanel';
+import { TaskComments } from '../components/TaskComments';
 import { useAuth } from '../hooks/useAuth';
 import { projectService } from '../services/projectService';
 import { taskService } from '../services/taskService';
 import { userService } from '../services/userService';
-import type { Project, Task, User } from '../types/models';
+import type { Project, Task, TaskWithCommentCount, User } from '../types/models';
 import { formatDateInput } from '../utils/date';
 import { canDeleteResources, canEditTask, isPrivilegedRole } from '../utils/permissions';
 
@@ -41,7 +42,7 @@ export const TasksPage = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskWithCommentCount[]>([]);
   const [taskEdits, setTaskEdits] = useState<Record<string, TaskFormState>>({});
   const [createState, setCreateState] = useState<TaskFormState>({
     projectId: '',
@@ -100,7 +101,7 @@ export const TasksPage = () => {
         dueDate: createState.dueDate || null,
       });
 
-      setTasks((current) => [createdTask, ...current]);
+      setTasks((current) => [{ ...createdTask, commentCount: 0 }, ...current]);
       setTaskEdits((current) => ({
         ...current,
         [createdTask._id]: buildTaskFormState(createdTask),
@@ -139,7 +140,11 @@ export const TasksPage = () => {
         dueDate: formState.dueDate || null,
       });
 
-      setTasks((current) => current.map((task) => (task._id === taskId ? updatedTask : task)));
+      setTasks((current) =>
+        current.map((task) =>
+          task._id === taskId ? { ...updatedTask, commentCount: task.commentCount } : task,
+        ),
+      );
       setTaskEdits((current) => ({
         ...current,
         [taskId]: buildTaskFormState(updatedTask),
@@ -393,6 +398,11 @@ export const TasksPage = () => {
                           Delete
                         </button>
                       ) : null}
+                      <TaskComments
+                        commentCount={task.commentCount}
+                        taskId={task._id}
+                        users={users}
+                      />
                     </div>
                   </article>
                 </li>
