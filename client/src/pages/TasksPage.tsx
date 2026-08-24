@@ -1,24 +1,20 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { PageHeader } from "../components/PageHeader";
-import { StatusPanel } from "../components/StatusPanel";
-import { useAuth } from "../hooks/useAuth";
-import { projectService } from "../services/projectService";
-import { taskService } from "../services/taskService";
-import { userService } from "../services/userService";
-import type { Project, Task, User } from "../types/models";
-import { formatDateInput } from "../utils/date";
-import {
-  canDeleteResources,
-  canEditTask,
-  isPrivilegedRole,
-} from "../utils/permissions";
+import { useEffect, useState, type FormEvent } from 'react';
+import { PageHeader } from '../components/PageHeader';
+import { StatusPanel } from '../components/StatusPanel';
+import { useAuth } from '../hooks/useAuth';
+import { projectService } from '../services/projectService';
+import { taskService } from '../services/taskService';
+import { userService } from '../services/userService';
+import type { Project, Task, User } from '../types/models';
+import { formatDateInput } from '../utils/date';
+import { canDeleteResources, canEditTask, isPrivilegedRole } from '../utils/permissions';
 
 interface TaskFormState {
   projectId: string;
   title: string;
   description: string;
-  status: Task["status"];
-  priority: Task["priority"];
+  status: Task['status'];
+  priority: Task['priority'];
   assignedTo: string;
   dueDate: string;
 }
@@ -29,12 +25,12 @@ const buildTaskFormState = (task: Task): TaskFormState => ({
   description: task.description,
   status: task.status,
   priority: task.priority,
-  assignedTo: task.assignedTo ?? "",
+  assignedTo: task.assignedTo ?? '',
   dueDate: formatDateInput(task.dueDate),
 });
 
 const selectClassName =
-  "appearance-none rounded-2xl border border-slate-200 bg-no-repeat bg-[length:14px] bg-[right_1.25rem_center] py-3 pl-4 pr-10 transition hover:border-slate-300";
+  'appearance-none rounded-2xl border border-slate-200 bg-no-repeat bg-[length:14px] bg-[right_1.25rem_center] py-3 pl-4 pr-10 transition hover:border-slate-300';
 
 const selectCaretStyle = {
   backgroundImage:
@@ -48,13 +44,13 @@ export const TasksPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskEdits, setTaskEdits] = useState<Record<string, TaskFormState>>({});
   const [createState, setCreateState] = useState<TaskFormState>({
-    projectId: "",
-    title: "",
-    description: "",
-    status: "todo",
-    priority: "medium",
-    assignedTo: user?._id ?? "",
-    dueDate: "",
+    projectId: '',
+    title: '',
+    description: '',
+    status: 'todo',
+    priority: 'medium',
+    assignedTo: user?._id ?? '',
+    dueDate: '',
   });
   const [loading, setLoading] = useState(true);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -75,19 +71,15 @@ export const TasksPage = () => {
       setUsers(nextUsers);
       setTasks(nextTasks);
       setTaskEdits(
-        Object.fromEntries(
-          nextTasks.map((task) => [task._id, buildTaskFormState(task)]),
-        ),
+        Object.fromEntries(nextTasks.map((task) => [task._id, buildTaskFormState(task)])),
       );
       setCreateState((current) => ({
         ...current,
-        projectId: nextProjects[0]?._id ?? "",
-        assignedTo: user?._id ?? "",
+        projectId: nextProjects[0]?._id ?? '',
+        assignedTo: user?._id ?? '',
       }));
     } catch (loadError) {
-      setCreateError(
-        loadError instanceof Error ? loadError.message : "Unable to load tasks",
-      );
+      setCreateError(loadError instanceof Error ? loadError.message : 'Unable to load tasks');
     } finally {
       setLoading(false);
     }
@@ -114,28 +106,20 @@ export const TasksPage = () => {
         [createdTask._id]: buildTaskFormState(createdTask),
       }));
       setCreateState({
-        projectId: projects[0]?._id ?? "",
-        title: "",
-        description: "",
-        status: "todo",
-        priority: "medium",
-        assignedTo: user?._id ?? "",
-        dueDate: "",
+        projectId: projects[0]?._id ?? '',
+        title: '',
+        description: '',
+        status: 'todo',
+        priority: 'medium',
+        assignedTo: user?._id ?? '',
+        dueDate: '',
       });
     } catch (createError) {
-      setCreateError(
-        createError instanceof Error
-          ? createError.message
-          : "Unable to create task",
-      );
+      setCreateError(createError instanceof Error ? createError.message : 'Unable to create task');
     }
   };
 
-  const handleTaskEdit = (
-    taskId: string,
-    field: keyof TaskFormState,
-    value: string,
-  ) => {
+  const handleTaskEdit = (taskId: string, field: keyof TaskFormState, value: string) => {
     setTaskEdits((current) => ({
       ...current,
       [taskId]: {
@@ -155,21 +139,16 @@ export const TasksPage = () => {
         dueDate: formState.dueDate || null,
       });
 
-      setTasks((current) =>
-        current.map((task) => (task._id === taskId ? updatedTask : task)),
-      );
+      setTasks((current) => current.map((task) => (task._id === taskId ? updatedTask : task)));
       setTaskEdits((current) => ({
         ...current,
         [taskId]: buildTaskFormState(updatedTask),
       }));
-      setTaskErrors((current) => ({ ...current, [taskId]: "" }));
+      setTaskErrors((current) => ({ ...current, [taskId]: '' }));
     } catch (saveError) {
       setTaskErrors((current) => ({
         ...current,
-        [taskId]:
-          saveError instanceof Error
-            ? saveError.message
-            : "Unable to update task",
+        [taskId]: saveError instanceof Error ? saveError.message : 'Unable to update task',
       }));
     }
   };
@@ -181,21 +160,13 @@ export const TasksPage = () => {
     } catch (deleteError) {
       setTaskErrors((current) => ({
         ...current,
-        [taskId]:
-          deleteError instanceof Error
-            ? deleteError.message
-            : "Unable to delete task",
+        [taskId]: deleteError instanceof Error ? deleteError.message : 'Unable to delete task',
       }));
     }
   };
 
   if (loading) {
-    return (
-      <StatusPanel
-        title="Loading tasks"
-        message="Fetching projects, users, and tasks."
-      />
-    );
+    return <StatusPanel title="Loading tasks" message="Fetching projects, users, and tasks." />;
   }
 
   return (
@@ -205,10 +176,7 @@ export const TasksPage = () => {
         title="Tasks"
       />
       <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-        <form
-          className="rounded-3xl bg-white p-6 shadow-sm"
-          onSubmit={handleCreate}
-        >
+        <form className="rounded-3xl bg-white p-6 shadow-sm" onSubmit={(e) => void handleCreate(e)}>
           <h2 className="text-xl font-semibold text-ink">Create task</h2>
           <div className="mt-4 space-y-4">
             <select
@@ -256,7 +224,7 @@ export const TasksPage = () => {
                 onChange={(event) =>
                   setCreateState((current) => ({
                     ...current,
-                    status: event.target.value as Task["status"],
+                    status: event.target.value as Task['status'],
                   }))
                 }
                 style={selectCaretStyle}
@@ -271,7 +239,7 @@ export const TasksPage = () => {
                 onChange={(event) =>
                   setCreateState((current) => ({
                     ...current,
-                    priority: event.target.value as Task["priority"],
+                    priority: event.target.value as Task['priority'],
                   }))
                 }
                 style={selectCaretStyle}
@@ -321,9 +289,7 @@ export const TasksPage = () => {
                 value={createState.dueDate}
               />
             </div>
-            {createError ? (
-              <p className="text-sm text-danger">{createError}</p>
-            ) : null}
+            {createError ? <p className="text-sm text-danger">{createError}</p> : null}
             <button
               className="rounded-[12px] bg-ink px-4 py-3 font-medium text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
               type="submit"
@@ -345,33 +311,21 @@ export const TasksPage = () => {
                       <input
                         className="rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:bg-slate-100 md:col-span-2"
                         disabled={!canEdit}
-                        onChange={(event) =>
-                          handleTaskEdit(task._id, "title", event.target.value)
-                        }
+                        onChange={(event) => handleTaskEdit(task._id, 'title', event.target.value)}
                         value={formState?.title ?? task.title}
                       />
                       <textarea
                         className="min-h-24 rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:bg-slate-100 md:col-span-2"
                         disabled={!canEdit}
                         onChange={(event) =>
-                          handleTaskEdit(
-                            task._id,
-                            "description",
-                            event.target.value,
-                          )
+                          handleTaskEdit(task._id, 'description', event.target.value)
                         }
                         value={formState?.description ?? task.description}
                       />
                       <select
                         className={`${selectClassName} disabled:bg-slate-100`}
                         disabled={!canEdit}
-                        onChange={(event) =>
-                          handleTaskEdit(
-                            task._id,
-                            "status",
-                            event.target.value,
-                          )
-                        }
+                        onChange={(event) => handleTaskEdit(task._id, 'status', event.target.value)}
                         style={selectCaretStyle}
                         value={formState?.status ?? task.status}
                       >
@@ -383,11 +337,7 @@ export const TasksPage = () => {
                         className={`${selectClassName} disabled:bg-slate-100`}
                         disabled={!canEdit}
                         onChange={(event) =>
-                          handleTaskEdit(
-                            task._id,
-                            "priority",
-                            event.target.value,
-                          )
+                          handleTaskEdit(task._id, 'priority', event.target.value)
                         }
                         style={selectCaretStyle}
                         value={formState?.priority ?? task.priority}
@@ -400,14 +350,10 @@ export const TasksPage = () => {
                         className={`${selectClassName} disabled:bg-slate-100`}
                         disabled={!isPrivilegedRole(user?.role)}
                         onChange={(event) =>
-                          handleTaskEdit(
-                            task._id,
-                            "assignedTo",
-                            event.target.value,
-                          )
+                          handleTaskEdit(task._id, 'assignedTo', event.target.value)
                         }
                         style={selectCaretStyle}
-                        value={formState?.assignedTo ?? task.assignedTo ?? ""}
+                        value={formState?.assignedTo ?? task.assignedTo ?? ''}
                       >
                         <option value="">Unassigned</option>
                         {users.map((assignee) => (
@@ -420,22 +366,14 @@ export const TasksPage = () => {
                         className="rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 disabled:bg-slate-100"
                         disabled={!canEdit}
                         onChange={(event) =>
-                          handleTaskEdit(
-                            task._id,
-                            "dueDate",
-                            event.target.value,
-                          )
+                          handleTaskEdit(task._id, 'dueDate', event.target.value)
                         }
                         type="date"
-                        value={
-                          formState?.dueDate ?? formatDateInput(task.dueDate)
-                        }
+                        value={formState?.dueDate ?? formatDateInput(task.dueDate)}
                       />
                     </div>
                     {taskErrors[task._id] ? (
-                      <p className="mt-4 text-sm text-danger">
-                        {taskErrors[task._id]}
-                      </p>
+                      <p className="mt-4 text-sm text-danger">{taskErrors[task._id]}</p>
                     ) : null}
                     <div className="mt-4 flex flex-wrap gap-3">
                       <button
@@ -462,10 +400,7 @@ export const TasksPage = () => {
             })}
           </ul>
         ) : (
-          <StatusPanel
-            title="No tasks"
-            message="Create the first task for this organization."
-          />
+          <StatusPanel title="No tasks" message="Create the first task for this organization." />
         )}
       </section>
     </div>

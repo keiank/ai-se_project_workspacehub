@@ -1,12 +1,12 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from 'express';
 import {
   createProject,
   deleteProject,
   getProjectById,
   listProjects,
   updateProject,
-} from "../services/projectService";
-import { sendSuccess } from "../utils/apiResponse";
+} from '../services/projectService';
+import { sendSuccess } from '../utils/apiResponse';
 
 export const listProjectsController = async (req: Request, res: Response) => {
   const projects = await listProjects(req.auth!.organizationId);

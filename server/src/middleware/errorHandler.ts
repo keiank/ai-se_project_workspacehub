@@ -1,14 +1,9 @@
-import type { NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
-import { AppError } from "../utils/appError";
-import { sendError } from "../utils/apiResponse";
+import type { NextFunction, Request, Response } from 'express';
+import mongoose from 'mongoose';
+import { AppError } from '../utils/appError';
+import { sendError } from '../utils/apiResponse';
 
-export const errorHandler = (
-  error: unknown,
-  _req: Request,
-  res: Response,
-  _next: NextFunction,
-) => {
+export const errorHandler = (error: unknown, _req: Request, res: Response, _next: NextFunction) => {
   if (error instanceof AppError) {
     return sendError(res, error.message, error.statusCode);
   }
@@ -18,8 +13,8 @@ export const errorHandler = (
   }
 
   if (error instanceof mongoose.Error.CastError) {
-    return sendError(res, "Resource not found", 404);
+    return sendError(res, 'Resource not found', 404);
   }
 
-  return sendError(res, "Internal server error", 500);
+  return sendError(res, 'Internal server error', 500);
 };

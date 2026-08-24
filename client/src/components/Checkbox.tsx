@@ -5,25 +5,20 @@ interface CheckboxProps {
   onChange?: (checked: boolean) => void;
 }
 
-export const Checkbox = ({
-  checked,
-  disabled,
-  label,
-  onChange,
-}: CheckboxProps) => (
+export const Checkbox = ({ checked, disabled, label, onChange }: CheckboxProps) => (
   <label
     className={[
-      "group inline-flex items-center gap-2",
-      disabled ? "cursor-not-allowed opacity-50" : "",
-    ].join(" ")}
+      'group inline-flex items-center gap-2',
+      disabled ? 'cursor-not-allowed opacity-50' : '',
+    ].join(' ')}
   >
     <span
       className={[
-        "relative flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-[6px] border-[1.5px] transition",
+        'relative flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-[6px] border-[1.5px] transition',
         checked
-          ? "border-success bg-success group-hover:opacity-80"
-          : "border-slate-200 bg-white group-hover:border-slate-300",
-      ].join(" ")}
+          ? 'border-success bg-success group-hover:opacity-80'
+          : 'border-slate-200 bg-white group-hover:border-slate-300',
+      ].join(' ')}
     >
       <input
         checked={checked}

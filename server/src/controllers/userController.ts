@@ -1,6 +1,6 @@
-import type { Request, Response } from "express";
-import { getUserById, listUsers, updateUser } from "../services/userService";
-import { sendSuccess } from "../utils/apiResponse";
+import type { Request, Response } from 'express';
+import { getUserById, listUsers, updateUser } from '../services/userService';
+import { sendSuccess } from '../utils/apiResponse';
 
 export const listUsersController = async (req: Request, res: Response) => {
   const users = await listUsers(req.auth!.organizationId);

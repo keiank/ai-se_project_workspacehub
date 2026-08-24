@@ -1,4 +1,4 @@
-import { AppError } from "./appError";
+import { AppError } from './appError';
 
 export const assertFound = <T>(document: T | null, resourceName: string): T => {
   if (!document) {

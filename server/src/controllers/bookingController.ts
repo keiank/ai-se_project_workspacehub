@@ -1,12 +1,12 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from 'express';
 import {
   createBooking,
   deleteBooking,
   getBookingById,
   listBookings,
   updateBooking,
-} from "../services/bookingService";
-import { sendSuccess } from "../utils/apiResponse";
+} from '../services/bookingService';
+import { sendSuccess } from '../utils/apiResponse';
 
 export const listBookingsController = async (req: Request, res: Response) => {
   const bookings = await listBookings(req.auth!.organizationId);

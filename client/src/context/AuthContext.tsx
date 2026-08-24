@@ -1,38 +1,18 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type PropsWithChildren,
-} from "react";
-import {
-  authService,
-  type LoginPayload,
-  type RegisterPayload,
-} from "../services/authService";
-import { setAuthToken } from "../services/api";
-import type {
-  FeatureFlags,
-  Organization,
-  User,
-  UserRole,
-} from "../types/models";
-import { AuthContext, type AuthContextValue } from "./authContextDefinition";
+import { useEffect, useMemo, useState, type PropsWithChildren } from 'react';
+import { authService, type LoginPayload, type RegisterPayload } from '../services/authService';
+import { setAuthToken } from '../services/api';
+import type { FeatureFlags, Organization, User, UserRole } from '../types/models';
+import { AuthContext, type AuthContextValue } from './authContextDefinition';
 
-const STORAGE_KEY = "workspacehub_token";
+const STORAGE_KEY = 'workspacehub_token';
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [token, setToken] = useState<string | null>(
-    window.localStorage.getItem(STORAGE_KEY),
-  );
+  const [token, setToken] = useState<string | null>(window.localStorage.getItem(STORAGE_KEY));
   const [user, setUser] = useState<User | null>(null);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const applySession = (
-    nextToken: string,
-    nextUser: User,
-    nextOrganization: Organization,
-  ) => {
+  const applySession = (nextToken: string, nextUser: User, nextOrganization: Organization) => {
     window.localStorage.setItem(STORAGE_KEY, nextToken);
     setAuthToken(nextToken);
     setToken(nextToken);

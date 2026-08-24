@@ -1,31 +1,36 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
-import { PageHeader } from "../components/PageHeader";
-import { StatusPanel } from "../components/StatusPanel";
-import { projectService } from "../services/projectService";
-import type { Project } from "../types/models";
-import { useAuth } from "../hooks/useAuth";
-import { canDeleteResources } from "../utils/permissions";
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { PageHeader } from '../components/PageHeader';
+import { StatusPanel } from '../components/StatusPanel';
+import { projectService } from '../services/projectService';
+import { taskService } from '../services/taskService';
+import { ProjectCreatePayload } from '../types/models';
+import type { ProjectWithTaskCount } from '../types/views';
+import { useAuth } from '../hooks/useAuth';
+import { canDeleteResources, canCreateProject } from '../utils/permissions';
+import { buildProjectWithTaskCount } from '../utils/projectMetrics';
 
 export const ProjectsPage = () => {
   const { user } = useAuth();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [formState, setFormState] = useState({ name: "", description: "" });
+  const [projects, setProjects] = useState<ProjectWithTaskCount[]>([]);
+  const [formState, setFormState] = useState<ProjectCreatePayload>({ name: '', description: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const loadProjects = async () => {
     setLoading(true);
-    setError(null);
+    setLoadError(null);
 
     try {
-      const nextProjects = await projectService.list();
-      setProjects(nextProjects);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Unable to load projects",
+      const [nextProjects, tasks] = await Promise.all([projectService.list(), taskService.list()]);
+      const projectsWithCounts: ProjectWithTaskCount[] = nextProjects.map((project) =>
+        buildProjectWithTaskCount(project, tasks),
       );
+      setProjects(projectsWithCounts);
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : 'Unable to load projects');
     } finally {
       setLoading(false);
     }
@@ -38,17 +43,19 @@ export const ProjectsPage = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSaving(true);
-    setError(null);
+    setActionError(null);
 
     try {
       const project = await projectService.create(formState);
-      setProjects((current) => [project, ...current]);
-      setFormState({ name: "", description: "" });
+      const withCount: ProjectWithTaskCount = {
+        ...project,
+        taskCount: 0,
+      };
+      setProjects((current) => [withCount, ...current]);
+      setFormState({ name: '', description: '' });
     } catch (submitError) {
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "Unable to create project",
+      setActionError(
+        submitError instanceof Error ? submitError.message : 'Unable to create project',
       );
     } finally {
       setSaving(false);
@@ -56,24 +63,23 @@ export const ProjectsPage = () => {
   };
 
   const handleDelete = async (projectId: string) => {
+    setActionError(null);
     try {
       await projectService.delete(projectId);
-      setProjects((current) =>
-        current.filter((project) => project._id !== projectId),
-      );
+      setProjects((current) => current.filter((project) => project._id !== projectId));
     } catch (deleteError) {
-      setError(
-        deleteError instanceof Error
-          ? deleteError.message
-          : "Unable to delete project",
+      setActionError(
+        deleteError instanceof Error ? deleteError.message : 'Unable to delete project',
       );
     }
   };
 
   if (loading) {
-    return (
-      <StatusPanel title="Loading projects" message="Fetching project list." />
-    );
+    return <StatusPanel title="Loading projects" message="Fetching project list." />;
+  }
+
+  if (loadError) {
+    return <StatusPanel title="Projects unavailable" message={loadError} />;
   }
 
   return (
@@ -83,44 +89,51 @@ export const ProjectsPage = () => {
         title="Projects"
       />
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <form
-          className="rounded-3xl bg-white p-6 shadow-sm"
-          onSubmit={handleSubmit}
-        >
-          <h2 className="text-xl font-semibold text-ink">Create project</h2>
-          <div className="mt-4 space-y-4">
-            <input
-              className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880]"
-              onChange={(event) =>
-                setFormState((current) => ({
-                  ...current,
-                  name: event.target.value,
-                }))
-              }
-              placeholder="Project name"
-              value={formState.name}
-            />
-            <textarea
-              className="min-h-32 w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880]"
-              onChange={(event) =>
-                setFormState((current) => ({
-                  ...current,
-                  description: event.target.value,
-                }))
-              }
-              placeholder="Description"
-              value={formState.description}
-            />
-            {error ? <p className="text-sm text-danger">{error}</p> : null}
-            <button
-              className="rounded-[12px] bg-ink px-4 py-3 font-medium text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={saving}
-              type="submit"
-            >
-              {saving ? "Creating..." : "Create project"}
-            </button>
-          </div>
-        </form>
+        {canCreateProject(user) ? (
+          <form
+            className="rounded-3xl bg-white p-6 shadow-sm"
+            onSubmit={(e) => void handleSubmit(e)}
+          >
+            <h2 className="text-xl font-semibold text-ink">Create project</h2>
+            <div className="mt-4 space-y-4">
+              <input
+                className="w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880]"
+                onChange={(event) =>
+                  setFormState((current) => ({
+                    ...current,
+                    name: event.target.value,
+                  }))
+                }
+                placeholder="Project name"
+                value={formState.name}
+              />
+              <textarea
+                className="min-h-32 w-full rounded-2xl border border-slate-200 transition hover:border-slate-300 px-4 py-3 placeholder:text-[#94A3B880]"
+                onChange={(event) =>
+                  setFormState((current) => ({
+                    ...current,
+                    description: event.target.value,
+                  }))
+                }
+                placeholder="Description"
+                value={formState.description}
+              />
+              {actionError ? <p className="text-sm text-danger">{actionError}</p> : null}
+              <button
+                className="rounded-[12px] bg-ink px-4 py-3 font-medium text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={saving}
+                type="submit"
+              >
+                {saving ? 'Creating...' : 'Create project'}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <StatusPanel
+            title="Project creation restricted"
+            message="Only owners and admins can create new projects from this page."
+          />
+        )}
         {projects.length ? (
           <ul className="space-y-4">
             {projects.map((project) => (
@@ -128,11 +141,10 @@ export const ProjectsPage = () => {
                 <article className="rounded-3xl bg-white p-6 shadow-sm">
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <h2 className="text-xl font-semibold text-ink">
-                        {project.name}
-                      </h2>
-                      <p className="mt-2 text-sm text-slate-600">
-                        {project.description}
+                      <h2 className="text-xl font-semibold text-ink">{project.name}</h2>
+                      <p className="mt-2 text-sm text-slate-600">{project.description}</p>
+                      <p className="mt-1 text-sm text-slate-500">
+                        {project.taskCount} {project.taskCount === 1 ? 'task' : 'tasks'}
                       </p>
                     </div>
                     <div className="flex gap-2">

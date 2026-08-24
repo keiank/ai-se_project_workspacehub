@@ -1,10 +1,10 @@
-import { Schema, model, Types, type InferSchemaType } from "mongoose";
+import { Schema, model, Types, type InferSchemaType } from 'mongoose';
 
 const projectSchema = new Schema(
   {
     organizationId: {
       type: Schema.Types.ObjectId,
-      ref: "Organization",
+      ref: 'Organization',
       required: true,
     },
     name: {
@@ -14,12 +14,12 @@ const projectSchema = new Schema(
     },
     description: {
       type: String,
-      default: "",
+      default: '',
       trim: true,
     },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
   },
@@ -32,4 +32,4 @@ export type ProjectDocument = InferSchemaType<typeof projectSchema> & {
   _id: Types.ObjectId;
 };
 
-export const Project = model<ProjectDocument>("Project", projectSchema);
+export const Project = model<ProjectDocument>('Project', projectSchema);

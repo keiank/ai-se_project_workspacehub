@@ -1,12 +1,12 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from 'express';
 import {
   createTask,
   deleteTask,
   getTaskById,
   listTasks,
   updateTask,
-} from "../services/taskService";
-import { sendSuccess } from "../utils/apiResponse";
+} from '../services/taskService';
+import { sendSuccess } from '../utils/apiResponse';
 
 export const listTasksController = async (req: Request, res: Response) => {
   const tasks = await listTasks(
