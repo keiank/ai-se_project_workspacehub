@@ -145,26 +145,48 @@ export const TaskComments = ({ taskId, commentCount, users }: TaskCommentsProps)
                   const isEditing = editingCommentId === comment._id;
 
                   return (
-                    <li
-                      className="border-t border-slate-100 pt-3 first:border-t-0 first:pt-0"
-                      key={comment._id}
-                    >
-                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        <p className="text-sm font-semibold text-ink">{authorName}</p>
-                        <p className="text-xs text-slate-500">
-                          {new Date(comment.createdAt).toLocaleString()}
-                        </p>
+                    <li className="rounded-2xl border border-slate-200 p-4" key={comment._id}>
+                      <div className="flex items-stretch gap-4">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                            <p className="text-sm font-semibold text-ink">{authorName}</p>
+                            <p className="text-xs text-slate-500">
+                              {new Date(comment.createdAt).toLocaleString()}
+                            </p>
+                          </div>
+                          {isEditing ? (
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <input
+                                className="min-w-0 flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                                onChange={(event) => setEditingContent(event.target.value)}
+                                value={editingContent}
+                              />
+                              <button
+                                className="rounded-[10px] bg-ink px-3 py-2 text-sm font-medium text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
+                                disabled={!editingContent.trim()}
+                                onClick={() => void handleSave(comment._id)}
+                                type="button"
+                              >
+                                Save
+                              </button>
+                            </div>
+                          ) : (
+                            <p className="mt-1 break-words text-sm text-slate-600">
+                              {comment.content}
+                            </p>
+                          )}
+                        </div>
                         {canManage ? (
-                          <div className="flex gap-2 text-xs">
+                          <div className="flex shrink-0 flex-col items-center justify-between gap-2 text-xs">
                             <button
-                              className="text-ink underline underline-offset-2 hover:opacity-70"
+                              className="rounded-[10px] bg-ink px-4 py-2 text-xs text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
                               onClick={() => handleEdit(comment)}
                               type="button"
                             >
-                              Edit
+                              Update
                             </button>
                             <button
-                              className="text-danger underline underline-offset-2 hover:opacity-70"
+                              className="text-danger hover:opacity-70"
                               onClick={() => void handleDelete(comment._id)}
                               type="button"
                             >
@@ -173,25 +195,6 @@ export const TaskComments = ({ taskId, commentCount, users }: TaskCommentsProps)
                           </div>
                         ) : null}
                       </div>
-                      {isEditing ? (
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          <input
-                            className="min-w-0 flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm"
-                            onChange={(event) => setEditingContent(event.target.value)}
-                            value={editingContent}
-                          />
-                          <button
-                            className="rounded-[10px] bg-ink px-3 py-2 text-sm font-medium text-white transition hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
-                            disabled={!editingContent.trim()}
-                            onClick={() => void handleSave(comment._id)}
-                            type="button"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      ) : (
-                        <p className="mt-1 text-sm text-slate-600">{comment.content}</p>
-                      )}
                     </li>
                   );
                 })}
