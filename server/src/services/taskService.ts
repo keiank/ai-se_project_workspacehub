@@ -155,6 +155,7 @@ export const deleteTask = async (actor: AuthPayload, id: string) => {
     throw new AppError('You do not have permission to delete this task', 403);
   }
 
+  await Comment.deleteMany({ organizationId: actor.organizationId, taskId: task._id });
   await task.deleteOne();
   return { deleted: true };
 };

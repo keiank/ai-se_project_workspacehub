@@ -6,6 +6,7 @@ import { Project } from '../models/Project';
 import { Task } from '../models/Task';
 import { User } from '../models/User';
 import { Comment } from '../models/Comment';
+import { deleteTask } from '../services/taskService';
 
 const seed = async () => {
   await connectToDatabase();
@@ -186,6 +187,32 @@ const seed = async () => {
   ]);
 
   await User.deleteOne({ _id: commentUser._id });
+
+  const temporaryTask = await Task.create({
+    organizationId: organization._id,
+    projectId: projectOne._id,
+    title: 'Temporary task',
+    description: 'Task created and removed during seeding.',
+    status: 'todo',
+    priority: 'low',
+    assignedTo: owner._id,
+  });
+
+  await Comment.create({
+    organizationId: organization._id,
+    taskId: temporaryTask._id,
+    authorId: owner._id,
+    content: 'Temporary comment for the task deletion check.',
+  });
+
+  await deleteTask(
+    {
+      userId: String(owner._id),
+      organizationId: String(organization._id),
+      role: owner.role,
+    },
+    String(temporaryTask._id),
+  );
 
   await Booking.create([
     {
