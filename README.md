@@ -1,10 +1,20 @@
 # WorkspaceHub
 
-WorkspaceHub is a project in TripleTen's AI Software Engineering program. It is a full-stack MERN application built with TypeScript on both the client and server. It supports multi-tenant organizations, role-based access, projects, tasks, bookings, and per-organization feature flags. 
+WorkspaceHub is a full-stack MERN application built with TypeScript on both the client and server. It supports multi-tenant organizations, role-based access, projects, tasks, bookings, and per-organization feature flags.
+  
+[Try it](https://ai-se-project-workspacehub-git-93b026-keian-kaserman-s-projects.vercel.app)
 
-Students are given this as starting code and, over the course of two sprints, accomplish a number of fixes, refactorings, and new features. The focus of these sprints is on safely and effectively using AI in an existing codebase.
+## Features
+- Project view with task count
+- Dashboard view of team member information
+- Booking form validation
+- Commenting on tasks
+- Task deletion cascades to delete comments
+- Conditional rendering of components based on role
+  - Project creation
+  - Comment editing and deletion
 
-## Starting stack
+## Stack
 
 - React + Vite + TypeScript
 - Tailwind CSS
@@ -12,6 +22,7 @@ Students are given this as starting code and, over the course of two sprints, ac
 - MongoDB + Mongoose
 - JWT authentication
 - Context API for client state
+- Vercel
 
 ## Project Structure
 
