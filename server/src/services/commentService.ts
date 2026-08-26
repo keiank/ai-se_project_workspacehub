@@ -61,9 +61,7 @@ export const updateComment = async (
     throw new AppError('You do not have permission to update this comment', 403);
   }
 
-  if (payload.content !== undefined) {
-    comment.content = requireString(payload.content, 'Content');
-  }
+  comment.content = requireString(payload.content, 'Content');
 
   await comment.save();
   return comment;
