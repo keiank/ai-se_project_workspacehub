@@ -2,7 +2,7 @@
 
 WorkspaceHub is a full-stack MERN application built with TypeScript on both the client and server. It supports multi-tenant organizations, role-based access, projects, tasks, bookings, and per-organization feature flags.
   
-[Try it](https://ai-se-project-workspacehub-git-93b026-keian-kaserman-s-projects.vercel.app)
+[Try it](https://ai-se-project-workspacehub-client-wine.vercel.app/)
 
 ## Features
 - Project view with task count
